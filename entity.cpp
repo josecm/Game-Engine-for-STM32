@@ -9,6 +9,7 @@ Entity::Entity(Game *game, int x, int y, int heigth, int width, float angle, str
     damping = 0.0;
     friction = 0.0;
     mass = 1.0;
+    fixed = false;
     active = true;
 
 }
@@ -22,6 +23,8 @@ void Entity::update(){
     setPosition(x + velocity.getX(), y + velocity.getY());
 
 }
+
+void Entity::readInput(){ }
 
 void Entity::onCollision(Entity &ent, Vector * mtd){
 
@@ -52,7 +55,21 @@ void Entity::setVelocity(float x, float y){
 }
 
 void Entity::setMass(float mass){
+
     this->mass = mass;
+    if(fabs(mass - std::numeric_limits<float>::max()) < 0.00001)
+        fixed = true;
+    else
+        fixed = false;
+}
+
+void Entity::setFixed(bool tf){
+
+    fixed = tf;
+    if(tf)
+        mass = std::numeric_limits<float>::max();
+    else
+        mass = getWidth() * getHeight() / 1000;
 }
 
 void Entity::setDamping(float damp){

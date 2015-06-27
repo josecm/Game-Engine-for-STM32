@@ -11,6 +11,8 @@
 
 using namespace std;
 
+enum COLOR { BLACK, WHITE, BLUE , RED, GREEN, YELLOW, ORGANE };
+
 typedef struct {
 
     int left;
@@ -31,7 +33,7 @@ protected:
     EDGE edge;
     Vector center;
 
-    char color;
+    COLOR color;
     char filled;
 
     float angle;
@@ -48,8 +50,9 @@ public:
     virtual void setWidth(int width);
     virtual void setDimensions(int, int);
 
-
     virtual void setAngle(float angle);
+
+    void setColor(COLOR clr);
 
     virtual float getX() { return x;}
     virtual float getY() { return y;}
@@ -88,14 +91,18 @@ public:
 
 };
 
+#define LETTER_WIDTH 10
+#define LETTER_HEIGHT 20
+
 class TextBoxImage: public Image{
 
     string text;
 
-
 public:
     TextBoxImage(int x = 0, int y = 0, string txt = "");
     void setText(string txt);
+
+
 };
 
 //TODO

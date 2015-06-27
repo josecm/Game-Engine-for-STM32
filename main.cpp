@@ -1,6 +1,5 @@
 #include <QApplication>
 #include <QDebug>
-#include "gameview.h"
 #include "testgame.h"
 
 

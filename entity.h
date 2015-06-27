@@ -1,5 +1,6 @@
 #ifndef ENTITY_H
 #define ENTITY_H
+
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
 #include <QKeyEvent>
@@ -8,7 +9,6 @@
 
 //////
 #include <typeinfo>
-#include "gameview.h"
 #include "vector.h"
 #include "image.h"
 #include "controller.h"
@@ -36,19 +36,23 @@ protected:
     float mass;
     float damping;
     float friction;
+    bool fixed;
     bool active;
     COLLISION_TYPE col_type;
 
 public:
     Entity(Game *game, int x = 0, int y = 0, int heigth = 1, int width = 1, float angle = 0.0, string bitmap = ":/imagens/transparent.png");
+
     virtual void update();
-    bool collidesWith(Entity *, Vector *normal);
-    virtual bool collideSquare(EntitySquare*, Vector *normal) = 0;
-    virtual bool collideCircle(EntityCircle*, Vector *normal) = 0;
     virtual void onCollision(Entity &ent, Vector *mtd);
     virtual void bounce(Entity &ent, Vector *normal);
 
+    bool collidesWith(Entity *, Vector *normal);
+    virtual bool collideSquare(EntitySquare*, Vector *normal) = 0;
+    virtual bool collideCircle(EntityCircle*, Vector *normal) = 0;
+
     void setInput(Controller *input) { this->input = input; }
+    virtual void readInput();
 
     void setVelocity(float x, float y);
     Vector getVelocity() { return velocity; }
@@ -60,9 +64,9 @@ public:
     float getFriction();
     void setActive(bool val) { active = val; }
     bool isActive(){ return active; }
+    void setFixed(bool tf);
+    bool isFixed() { return fixed; }
 
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
 };
 
 class EntitySquare : public Entity {

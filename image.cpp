@@ -96,14 +96,17 @@ SquareImage::SquareImage(int x, int y, int height, int width, float angle) : Ima
 TextBoxImage::TextBoxImage(int x, int y, string txt) : Image(x, y, 0, 0, 0) , text(txt) {
 
     item = new QGraphicsTextItem(QString::fromStdString(txt));
-
     item->setX(x); item->setY(y);
 
 }
 
+#define LETTER_WIDTH 10
+#define LETTER_HEIGHT 20
+
 void TextBoxImage::setText(string txt){
 
     text = txt;
+    color = BLACK;
 
     dynamic_cast<QGraphicsTextItem*>(item)->setPlainText(QString::fromStdString(txt));
 

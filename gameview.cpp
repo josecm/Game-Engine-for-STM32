@@ -1,27 +1,46 @@
 #include "gameview.h"
 
+ScreenBorder::ScreenBorder(Game *game, SCREEN_BORDER border) : EntitySquare(game){
+
+    tipo = border;
+
+    if(border == SCREEN_TOP){
+        setHeight(2);
+        setWidth(800);
+        setPosition(0, -10);
+        setMass(std::numeric_limits<float>::max());
+    } else if(border == SCREEN_BOTTOM){
+        setHeight(2);
+        setWidth(800);
+        setPosition(0, 600);
+        setMass(std::numeric_limits<float>::max());
+    } else if(border == SCREEN_LEFT){
+        setHeight(600);
+        setWidth(2);
+        setPosition(-10, 0);
+        setMass(std::numeric_limits<float>::max());
+    } else if(border == SCREEN_RIGHT){
+        setHeight(600);
+        setWidth(2);
+        setPosition(800, 0);
+        setMass(std::numeric_limits<float>::max());
+    }
+
+}
+
 Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
 {
 
-    game_over = false;
+    game_over = false; levelover = false; levelsucess = false; running = true;
+    currentlevel = 0;
     controller1 = new Controller();
     controller2 = new Controller();
 
-    EntitySquare *border_top = new EntitySquare(this, 0, -10, 2, 800, 0.0,  ":/imagens/transparent.png");
-    border_top->setMass(std::numeric_limits<float>::max());
-    screen_borders.push_back(border_top);
-
-    EntitySquare *border_bottom = new EntitySquare(this, 0, 600, 2, 800, 0.0, ":/imagens/transparent.png");
-    border_bottom->setMass(std::numeric_limits<float>::max());
-    screen_borders.push_back(border_bottom);
-
-    EntitySquare *border_left = new EntitySquare(this, -10, 0, 600, 2, 0.0,  ":/imagens/transparent.png");
-    border_left->setMass(std::numeric_limits<float>::max());
-    screen_borders.push_back(border_left);
-
-    EntitySquare *border_right = new EntitySquare(this, 800, 0, 600, 2, 0.0,  ":/imagens/transparent.png");
-    border_right->setMass(std::numeric_limits<float>::max());
-    screen_borders.push_back(border_right);
+    ScreenBorder *border;
+    border = new ScreenBorder(this, SCREEN_TOP); screen_borders.push_back(border);
+    border = new ScreenBorder(this, SCREEN_BOTTOM); screen_borders.push_back(border);
+    border = new ScreenBorder(this, SCREEN_RIGHT); screen_borders.push_back(border);
+    border = new ScreenBorder(this, SCREEN_LEFT); screen_borders.push_back(border);
 
     for(Entity* fig : screen_borders)
         entity_list.push_back(fig);
@@ -42,24 +61,65 @@ Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
 }
 
 void Game::run(){
+    level_list[currentlevel]->startlevel();
+    running = true;
     update_timer.start();
 }
 
 void Game::stop(){
+    running = false;
     update_timer.stop();
 }
 
+void Game::addLevel(Level *lvl){
+    level_list.push_back(lvl);
+}
+
 void Game::addEntity(Entity* ent){
+
     entity_list.push_back(ent);
+    graphics_list.push_back(ent);
+
     scene->addItem(ent->getQitem());
 }
 
 void Game::addGraphic(Image *img){
+
+    graphics_list.push_back(img);
+
     scene->addItem(img->getQitem());
+}
+
+void Game::removeEntity(Entity *ent){
+
+    for(int i = 0; i < entity_list.size(); i++){
+        if(ent == entity_list[i]){
+            scene->removeItem(entity_list[i]->getQitem());
+            entity_list.erase(entity_list.begin() + i);
+            return;
+        }
+    }
+
+}
+
+void Game::removeGraphic(Image* ent){
+
+    for(int i = 0; i < graphics_list.size(); i++){
+        if(ent == graphics_list[i]){
+            scene->removeItem(graphics_list[i]->getQitem());
+            graphics_list.erase(graphics_list.begin() + i);
+            return;
+        }
+    }
 }
 
 void Game::clearGraphics(){
     scene->clear();
+}
+
+void Game::levelOver(bool tf){
+    levelover = true;
+    levelsucess = tf;
 }
 
 void Game::keyPressEvent(QKeyEvent *event){
@@ -88,18 +148,15 @@ void Game::keyReleaseEvent(QKeyEvent *event){
 
 }
 
-void Game::update(){
+void Game::collisions(){
 
-    static int x = 0;
     Vector normal;
-
-
 
     for(int i = 0; i < entity_list.size(); i++){
         for(int k = 0; k < entity_list.size(); k++){
 
-            if(game_over)
-                return;
+            if(entity_list[k]->isFixed() && entity_list[i]->isFixed())
+                continue;
 
             if(k == i)
                 continue;
@@ -108,14 +165,37 @@ void Game::update(){
                 entity_list[i]->onCollision(*(entity_list[k]), &normal);
             }
 
-
-
         }
     }
 
+}
 
-    for(Entity *ent : entity_list)
-        ent->update();
+void Game::update(){
+
+    if(running){
+
+        collisions();
+
+        for(Entity *ent : entity_list)
+            ent->readInput();
+
+        for(Entity *ent : entity_list)
+            ent->update();
+
+        if(levelover){
+            levelover = false;
+            if(levelsucess){
+                level_list[currentlevel]->endlevel();
+                if(++currentlevel == level_list.size())
+                    currentlevel = 0;
+                level_list[currentlevel]->startlevel();
+            } else {
+                level_list[currentlevel]->initialize();
+            }
+
+        }
+
+    }
 
 }
 

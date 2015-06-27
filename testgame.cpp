@@ -4,7 +4,7 @@ TestGame::TestGame() : Game()
 {
     counter = 0;
     message = new TextBoxImage(750, 50, "0");
-    message2 = new TextBoxImage(250, 350, "GAME OVER");
+    addGraphic(message);
 
     player = new Player(this, 25,25);
     player->setInput(controller1);
@@ -14,14 +14,21 @@ TestGame::TestGame() : Game()
     finish->setMass(std::numeric_limits<float>::max());
     addEntity(finish);
 
+
+    // NIVEL 1
+
+    TestLevel *level1 = new TestLevel(this, 25, 25, 700, 500);
+    TestLevel *level2 = new TestLevel(this, 25, 100, 700, 500);
+
     Wall *wall;
-    wall = new Wall(this, 100, 0); addEntity(wall);
-    wall = new Wall(this, 250, 200); addEntity(wall);
-    wall = new Wall(this, 400, 0); addEntity(wall);
-    wall = new Wall(this, 550, 200); addEntity(wall);
+    wall = new Wall(this, 100, 0); level1->addEntity(wall); level2->addEntity(wall);
+    wall = new Wall(this, 250, 200); level1->addEntity(wall);
+    wall = new Wall(this, 400, 0); level1->addEntity(wall); level2->addEntity(wall);
+    wall = new Wall(this, 550, 200); level1->addEntity(wall);
     //wall = new Wall(this, 700, 0); addEntity(wall);
 
-    addGraphic(message);
+    addLevel(level1);
+    addLevel(level2);
 
 }
 
@@ -30,7 +37,7 @@ Player::Player(Game *game, int x, int y) : EntityCircle(game, x, y, 25, ":/image
     setVelocity(0.0, 0.0);
 }
 
-void Player::update(){
+void Player::readInput(){
 
     if(input){
         if(input->left)
@@ -43,7 +50,6 @@ void Player::update(){
             velocity.setY(velocity.getY() + 0.1);
     }
 
-    EntityCircle::update();
 }
 
 void Player::onCollision(Entity &ent, Vector *mtd) {
@@ -53,19 +59,15 @@ void Player::onCollision(Entity &ent, Vector *mtd) {
     if(&ent == testgame->finish){
 
         if(mtd->getLength() > (ent.getWidth()) / 2){
-            setPosition(25,25); setVelocity(0.0, 0.0);
-            (testgame->counter)++;
-            ostringstream stream;
-            stream << testgame->counter;
-            testgame->message->setText(stream.str());
+            setPosition(25,25);
+            setVelocity(0.0, 0.0);
+
+            game->levelOver(true);
         }
      }
      else if(typeid(ent) == typeid(Wall)){
-         qDebug() << "Collides with wall";
          if(mtd->getLength() > getWidth() / 2){
-            testgame->clearGraphics();
-            testgame->addGraphic(testgame->message2);
-            testgame->game_over = true;
+            game->levelOver(false);
          }
      }
      else {
