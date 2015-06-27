@@ -67,7 +67,7 @@ public:
 class BitmapImage : public Image {
 
 public:
-    BitmapImage(string bitmap = "/Users/Ze/Desktop/transparent.png", int x = 0, int y = 0, int heigth = 10, int width = 10, float angle = 0.0);
+    BitmapImage(string bitmap = ":/imagens/transparent.png", int x = 0, int y = 0, int heigth = 10, int width = 10, float angle = 0.0);
 
 };
 

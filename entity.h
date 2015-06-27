@@ -40,7 +40,7 @@ protected:
     COLLISION_TYPE col_type;
 
 public:
-    Entity(Game *game, int x = 0, int y = 0, int heigth = 1, int width = 1, float angle = 0.0, string bitmap = "/Users/Ze/Desktop/finishline.png");
+    Entity(Game *game, int x = 0, int y = 0, int heigth = 1, int width = 1, float angle = 0.0, string bitmap = ":/imagens/transparent.png");
     virtual void update();
     bool collidesWith(Entity *, Vector *normal);
     virtual bool collideSquare(EntitySquare*, Vector *normal) = 0;
@@ -84,7 +84,7 @@ class EntitySquare : public Entity {
 
 public:
 
-    EntitySquare(Game *game, int x = 0, int y = 0, int heigth = 100, int width = 100, float angle = 0.0, string bitmap = "/Users/Ze/Desktop/rass100.bmp");
+    EntitySquare(Game *game, int x = 0, int y = 0, int heigth = 100, int width = 100, float angle = 0.0, string bitmap = ":/imagens/rass100.bmp");
     void update();
     bool collidesWith(Entity *);
 
@@ -100,7 +100,7 @@ class EntityCircle : public Entity {
 
 public:
 
-    EntityCircle(Game *game, int x = 0, int y = 0, int radius = 50, string bitmap = "/Users/Ze/Desktop/circle100.png");
+    EntityCircle(Game *game, int x = 0, int y = 0, int radius = 50, string bitmap = ":/imagens/circle100.png");
     bool collidesWith(Entity *);
     void update();
 

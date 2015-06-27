@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/imagens">
+        <file>finishline.png</file>
+        <file>transparent.png</file>
+        <file>wall50x500.png</file>
+        <file>wall50x400.png</file>
+        <file>wall300x100.png</file>
+        <file>circle50.png</file>
+        <file>circle100.png</file>
+        <file>rass100.bmp</file>
+        <file>square100.bmp</file>
+    </qresource>
+</RCC>

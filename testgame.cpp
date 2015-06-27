@@ -10,7 +10,7 @@ TestGame::TestGame() : Game()
     player->setInput(controller1);
     addEntity(player);
 
-    finish = new EntitySquare(this ,700, 500, 50, 50,0.0, "/Users/Ze/Desktop/finishline.png");
+    finish = new EntitySquare(this ,700, 500, 50, 50,0.0, ":/imagens/finishline.png");
     finish->setMass(std::numeric_limits<float>::max());
     addEntity(finish);
 
@@ -25,10 +25,9 @@ TestGame::TestGame() : Game()
 
 }
 
-Player::Player(Game *game, int x, int y) : EntityCircle(game, x, y, 25, "/Users/Ze/Desktop/circle50.png") {
+Player::Player(Game *game, int x, int y) : EntityCircle(game, x, y, 25, ":/imagens/circle50.png") {
 
     setVelocity(0.0, 0.0);
-
 }
 
 void Player::update(){
@@ -75,7 +74,7 @@ void Player::onCollision(Entity &ent, Vector *mtd) {
 
 }
 
-Wall::Wall(Game* game, int x, int y) : EntitySquare(game, x, y, 500, 50, 0.0,  "/Users/Ze/Desktop/wall50x500.png") {
+Wall::Wall(Game* game, int x, int y) : EntitySquare(game, x, y, 500, 50, 0.0, ":/imagens/wall50x500.png") {
 
     setMass(std::numeric_limits<float>::max());
     setDamping(0.15);

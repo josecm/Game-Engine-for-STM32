@@ -1,6 +1,9 @@
 #ifndef TESTGAME_H
 #define TESTGAME_H
 
+#include <QDir>
+#include <QDebug>
+
 #include <limits>
 #include "gameview.h"
 #include "entity.h"

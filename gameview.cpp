@@ -7,19 +7,19 @@ Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
     controller1 = new Controller();
     controller2 = new Controller();
 
-    EntitySquare *border_top = new EntitySquare(this, 0, -10, 2, 800, 0.0,  "/Users/Ze/Desktop/transparent.png");
+    EntitySquare *border_top = new EntitySquare(this, 0, -10, 2, 800, 0.0,  ":/imagens/transparent.png");
     border_top->setMass(std::numeric_limits<float>::max());
     screen_borders.push_back(border_top);
 
-    EntitySquare *border_bottom = new EntitySquare(this, 0, 600, 2, 800, 0.0, "/Users/Ze/Desktop/transparent.png");
+    EntitySquare *border_bottom = new EntitySquare(this, 0, 600, 2, 800, 0.0, ":/imagens/transparent.png");
     border_bottom->setMass(std::numeric_limits<float>::max());
     screen_borders.push_back(border_bottom);
 
-    EntitySquare *border_left = new EntitySquare(this, -10, 0, 600, 2, 0.0,  "/Users/Ze/Desktop/transparent.png");
+    EntitySquare *border_left = new EntitySquare(this, -10, 0, 600, 2, 0.0,  ":/imagens/transparent.png");
     border_left->setMass(std::numeric_limits<float>::max());
     screen_borders.push_back(border_left);
 
-    EntitySquare *border_right = new EntitySquare(this, 800, 0, 600, 2, 0.0,  "/Users/Ze/Desktop/transparent.png");
+    EntitySquare *border_right = new EntitySquare(this, 800, 0, 600, 2, 0.0,  ":/imagens/transparent.png");
     border_right->setMass(std::numeric_limits<float>::max());
     screen_borders.push_back(border_right);
 
