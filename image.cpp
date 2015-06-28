@@ -40,8 +40,12 @@ void Image::setHeight(int height) {
     edge.top = - height/2;
     center.setY(y + height/2);
 
-    if(item != NULL)
-        item->update(x,y, width, height);
+    if(item != NULL){
+        if(typeid(item) == typeid(QGraphicsRectItem*) )
+            dynamic_cast<QGraphicsRectItem*>(item)->setRect(x,y, width, height);
+
+        item->update(0,0, 600, 800);
+    }
 
 }
 
@@ -52,8 +56,12 @@ void Image::setWidth(int width) {
     edge.right = width/2;
     center.setX(x + width/2);
 
-    if(item != NULL)
-        item->update(x,y, width, height);
+    if(item != NULL){
+        if(typeid(item) == typeid(QGraphicsRectItem*) )
+            dynamic_cast<QGraphicsRectItem*>(item)->setRect(x,y, width, height);
+
+        item->update(0,0, 600, 800);
+    }
 }
 
 void Image::setDimensions(int width, int height){
@@ -80,6 +88,12 @@ void Image::setAngle(float angle) {
 
 }
 
+void Image::setColor(COLOR clr){
+
+    color = clr;
+
+}
+
 BitmapImage::BitmapImage(string bitmap, int x, int y, int height, int width, float angle) :   Image(x,y,height,width, angle) {
 
     item = new QGraphicsPixmapItem();
@@ -97,17 +111,63 @@ TextBoxImage::TextBoxImage(int x, int y, string txt) : Image(x, y, 0, 0, 0) , te
 
     item = new QGraphicsTextItem(QString::fromStdString(txt));
     item->setX(x); item->setY(y);
+    color = BLACK;
+    setTextSize(TEXT_SMALL);
 
 }
-
-#define LETTER_WIDTH 10
-#define LETTER_HEIGHT 20
 
 void TextBoxImage::setText(string txt){
 
     text = txt;
-    color = BLACK;
-
     dynamic_cast<QGraphicsTextItem*>(item)->setPlainText(QString::fromStdString(txt));
+    setTextSize(size);
 
+}
+
+void TextBoxImage::setColor(COLOR clr){
+
+    QGraphicsTextItem *textitem = dynamic_cast<QGraphicsTextItem*>(item);
+
+    color = clr;
+
+    switch(clr){
+
+        case(BLACK):
+            textitem->setDefaultTextColor(Qt::black);
+            break;
+
+        case(WHITE):
+            textitem->setDefaultTextColor(Qt::white);
+            break;
+
+        case(BLUE):
+            textitem->setDefaultTextColor(Qt::blue);
+            break;
+
+        case(RED):
+            textitem->setDefaultTextColor(Qt::red);
+            break;
+
+        case(GREEN):
+            textitem->setDefaultTextColor(Qt::green);
+            break;
+
+
+    }
+
+
+}
+
+void TextBoxImage::setTextSize(TEXT_SIZE size){
+
+    QGraphicsTextItem *textitem = dynamic_cast<QGraphicsTextItem*>(item);
+    QFont font = textitem->font();
+    font.setPixelSize(size);
+    QFontMetrics metric(font);
+    textitem->setFont(font);
+
+    this->size = size;
+    height = size;
+
+    width = metric.width(QString::fromStdString(text));
 }

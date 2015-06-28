@@ -15,6 +15,7 @@
 ////////
 #include <vector>
 #include <limits>
+#include "menu.h"
 #include "level.h"
 #include "entity.h"
 #include "image.h"
@@ -24,7 +25,9 @@
 using namespace std;
 
 enum SCREEN_BORDER {SCREEN_TOP, SCREEN_BOTTOM, SCREEN_LEFT, SCREEN_RIGHT};
+enum GAME_STATE {RUNNING, PAUSED};
 class Level;
+class Menu;
 
 class ScreenBorder : public EntitySquare {
 
@@ -50,11 +53,11 @@ private:
     vector<Entity*> entity_list;
     vector<Image*> graphics_list;
     vector<ScreenBorder*> screen_borders;
+    Menu* paused_menu;
 
 protected:
     Controller* controller1, *controller2;
-    bool game_over;
-    bool running;
+    GAME_STATE state;
     bool levelover;
     bool levelsucess;
     int currentlevel;
@@ -68,9 +71,12 @@ public:
     void removeEntity(Entity *);
     void removeGraphic(Image*);
     void clearGraphics();
+    void setMenuPaused(Menu*);
+
+
     void run();
     void stop();
-    //void pause();
+    void pause(bool);
     virtual void collisions();
     void levelOver(bool tf);
     bool isLevelOverSuccess() { return levelsucess; }

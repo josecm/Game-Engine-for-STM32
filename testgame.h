@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <limits>
 #include "gameview.h"
+#include "menu.h"
 #include <sstream>
 
 
@@ -35,7 +36,7 @@ class TestGame : public Game
 
     Player *player;
     EntitySquare *finish;
-    TextBoxImage *message, *message2;
+    TextBoxImage *message, *message2, *menu;
     int counter;
 
 public:

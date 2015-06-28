@@ -31,10 +31,13 @@ ScreenBorder::ScreenBorder(Game *game, SCREEN_BORDER border) : EntitySquare(game
 Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
 {
 
-    game_over = false; levelover = false; levelsucess = false; running = true;
+
+    levelover = false; levelsucess = false;
     currentlevel = 0;
+    state = RUNNING;
     controller1 = new Controller();
     controller2 = new Controller();
+    paused_menu = NULL;
 
     ScreenBorder *border;
     border = new ScreenBorder(this, SCREEN_TOP); screen_borders.push_back(border);
@@ -57,17 +60,38 @@ Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
 
     update_timer.setInterval(17);
     connect(&update_timer, SIGNAL(timeout()), this, SLOT(update()) );
-    //run();
+    update_timer.start();
 }
 
 void Game::run(){
     level_list[currentlevel]->startlevel();
-    running = true;
-    update_timer.start();
+    state = RUNNING;
+}
+
+void Game::pause(bool tf){
+
+    if(paused_menu == NULL)
+        return;
+
+    if(tf){
+        if(state == PAUSED)
+            return;
+
+        state = PAUSED;
+        paused_menu->startMenu();
+
+    } else {
+
+        if(state != PAUSED)
+            return;
+
+        state = RUNNING;
+        paused_menu->endMenu();
+
+    }
 }
 
 void Game::stop(){
-    running = false;
     update_timer.stop();
 }
 
@@ -117,6 +141,10 @@ void Game::clearGraphics(){
     scene->clear();
 }
 
+void Game::setMenuPaused(Menu *menu){
+    paused_menu = menu;
+}
+
 void Game::levelOver(bool tf){
     levelover = true;
     levelsucess = tf;
@@ -130,8 +158,12 @@ void Game::keyPressEvent(QKeyEvent *event){
         controller1->right = 1;
     else if(event->key() == Qt::Key_Up)
         controller1->up = 1;
-    else
+    else if(event->key() == Qt::Key_Down)
         controller1->down = 1;
+    else if(event->key() == Qt::Key_Space)
+        controller1->space = 1;
+    else if(event->key() == Qt::Key_P)
+        controller1->p_button = 1;
 
 }
 
@@ -143,8 +175,12 @@ void Game::keyReleaseEvent(QKeyEvent *event){
         controller1->right = 0;
     else if(event->key() == Qt::Key_Up)
         controller1->up = 0;
-    else
+    else if(event->key() == Qt::Key_Down)
         controller1->down = 0;
+    else if(event->key() == Qt::Key_Space)
+        controller1->space = 0;
+    else if(event->key() == Qt::Key_P)
+        controller1->p_button = 0;
 
 }
 
@@ -172,7 +208,7 @@ void Game::collisions(){
 
 void Game::update(){
 
-    if(running){
+    if(state == RUNNING){
 
         collisions();
 
@@ -192,8 +228,12 @@ void Game::update(){
             } else {
                 level_list[currentlevel]->initialize();
             }
-
         }
+
+    }
+
+    if(state == PAUSED) {
+        paused_menu->readInput();
 
     }
 

@@ -94,14 +94,18 @@ public:
 #define LETTER_WIDTH 10
 #define LETTER_HEIGHT 20
 
+enum TEXT_SIZE {TEXT_SMALL = 10, TEXT_MEDIUM = 20, TEXT_LARGE = 30} ;
+
 class TextBoxImage: public Image{
 
     string text;
+    TEXT_SIZE size;
 
 public:
     TextBoxImage(int x = 0, int y = 0, string txt = "");
     void setText(string txt);
-
+    void setColor(COLOR clr);
+    void setTextSize(TEXT_SIZE size);
 
 };
 
