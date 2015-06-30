@@ -37,6 +37,7 @@ class TestGame : public Game
     Player *player;
     EntitySquare *finish;
     TextBoxImage *message, *message2, *menu;
+    SquareImage *sqr;
     int counter;
 
 public:

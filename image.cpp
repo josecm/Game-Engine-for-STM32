@@ -29,7 +29,7 @@ void Image::setPosition(float x, float y) {
     center.setY(y + height/2);
 
     if(item != NULL)
-        item->setPos(x,y);
+        item->setPos(x, y);
 
 }
 
@@ -41,10 +41,13 @@ void Image::setHeight(int height) {
     center.setY(y + height/2);
 
     if(item != NULL){
-        if(typeid(item) == typeid(QGraphicsRectItem*) )
-            dynamic_cast<QGraphicsRectItem*>(item)->setRect(x,y, width, height);
-
-        item->update(0,0, 600, 800);
+        if(typeid(*item) == typeid(QGraphicsRectItem) ){
+           QGraphicsRectItem* shape = dynamic_cast<QGraphicsRectItem*>(item);
+           QRectF rect = shape->rect();
+           rect.setHeight(height);
+           shape->setRect(rect);
+        }
+        //item->update(0,0, 600, 800);
     }
 
 }
@@ -57,10 +60,13 @@ void Image::setWidth(int width) {
     center.setX(x + width/2);
 
     if(item != NULL){
-        if(typeid(item) == typeid(QGraphicsRectItem*) )
-            dynamic_cast<QGraphicsRectItem*>(item)->setRect(x,y, width, height);
-
-        item->update(0,0, 600, 800);
+        if(typeid(*item) == typeid(QGraphicsRectItem) ){
+           QGraphicsRectItem* shape = dynamic_cast<QGraphicsRectItem*>(item);
+           QRectF rect = shape->rect();
+           rect.setWidth(width);
+           shape->setRect(rect);
+        }
+        //item->update(0,0, 600, 800);
     }
 }
 
@@ -91,6 +97,38 @@ void Image::setAngle(float angle) {
 void Image::setColor(COLOR clr){
 
     color = clr;
+    QAbstractGraphicsShapeItem* temp;
+    QGraphicsTextItem *textitem;
+    Qt::GlobalColor color;
+
+    switch(clr){
+        case(BLACK):
+            color = Qt::black;
+            break;
+
+        case(WHITE):
+            color = Qt::white;
+            break;
+
+        case(BLUE):
+            color = Qt::blue;
+            break;
+
+        case(RED):
+            color = Qt::red;
+            break;
+
+        case(GREEN):
+            color = Qt::green;
+            break;
+    }
+
+    if(temp = dynamic_cast<QAbstractGraphicsShapeItem*>(item)){
+        temp->setBrush(color);
+        //temp->setPen(QColor(color));
+    } else if(textitem = dynamic_cast<QGraphicsTextItem*>(item)){
+        textitem->setDefaultTextColor(color);
+    }
 
 }
 
@@ -103,7 +141,8 @@ BitmapImage::BitmapImage(string bitmap, int x, int y, int height, int width, flo
 
 SquareImage::SquareImage(int x, int y, int height, int width, float angle) : Image(x,y,height,width, angle){
 
-    item = new QGraphicsRectItem(x,y,height, width);
+    item = new QGraphicsRectItem(x, y, width, height);
+    //item = new QGraphicsRectItem();
     item->update(x,y, height, width);
 }
 
@@ -124,50 +163,17 @@ void TextBoxImage::setText(string txt){
 
 }
 
-void TextBoxImage::setColor(COLOR clr){
-
-    QGraphicsTextItem *textitem = dynamic_cast<QGraphicsTextItem*>(item);
-
-    color = clr;
-
-    switch(clr){
-
-        case(BLACK):
-            textitem->setDefaultTextColor(Qt::black);
-            break;
-
-        case(WHITE):
-            textitem->setDefaultTextColor(Qt::white);
-            break;
-
-        case(BLUE):
-            textitem->setDefaultTextColor(Qt::blue);
-            break;
-
-        case(RED):
-            textitem->setDefaultTextColor(Qt::red);
-            break;
-
-        case(GREEN):
-            textitem->setDefaultTextColor(Qt::green);
-            break;
-
-
-    }
-
-
-}
-
 void TextBoxImage::setTextSize(TEXT_SIZE size){
 
     QGraphicsTextItem *textitem = dynamic_cast<QGraphicsTextItem*>(item);
     QFont font = textitem->font();
+
     font.setPixelSize(size);
     QFontMetrics metric(font);
     textitem->setFont(font);
 
     this->size = size;
-    height = size;
+    setHeight(metric.height());
+    setWidth(metric.width(QString::fromStdString(text)));
 
-    width = metric.width(QString::fromStdString(text));
 }

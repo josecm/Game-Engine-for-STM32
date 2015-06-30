@@ -1,13 +1,56 @@
 #include "menu.h"
 
-MenuLine::MenuLine(int x, int y, string option, bool(*opt)(Game *)) : TextBoxImage(x, y, option),
+MenuLine::MenuLine(int x, int y, string option, bool(*opt)(Menu *)) : TextBoxImage(x, y, option),
     option(opt) {
 
 }
 
+bool returnOption(Menu *menu){
 
-MenuFrame::MenuFrame(int x , int y) : SquareImage(x, y), option_selected(NULL), max_line_length(0),
+    Game *game = menu->getGame();
+
+    if(game->getState() == PAUSED){
+        game->pause(false);
+    }
+    else
+        menu->popMenu();
+
+}
+
+
+MenuLineReturn::MenuLineReturn(int x, int y) :  MenuLine(x, y, "RETURN", returnOption) {
+
+}
+
+bool nextFrameOption(Menu *menu){
+
+
+    MenuLineNextFrame *line = dynamic_cast<MenuLineNextFrame*>(menu->peekMenu()->getOptionSelected());
+    menu->pushMenu(line->next);
+
+
+}
+
+MenuLineNextFrame::MenuLineNextFrame(MenuFrame* nxt, string str, int x, int y) : MenuLine(x, y, str, nextFrameOption), next(nxt) {
+
+}
+
+MenuFrame::MenuFrame() : SquareImage(), option_selected(NULL), max_line_length(0),
     num_options(0), lineHeight(TEXT_SMALL), option_selected_index(0) {
+
+    parentmenu = NULL;
+    returnline = new MenuLineReturn();
+    addMenuLine(returnline);
+    setColor(WHITE);
+
+}
+
+void MenuFrame::Center(){
+
+    int x = (800 - getWidth()) / 2;
+    int y = (600 - getHeight()) / 2;
+
+    setPosition(x, y);
 
 }
 
@@ -16,13 +59,12 @@ void MenuFrame::addMenuLine(MenuLine* option, int position){
     option->setColor(BLACK);
     option->setTextSize(TEXT_SMALL);
 
-
     if(position > num_options)
-        position = num_options + 1;
-    else if(position < 1)
-        position = 1;
+        position = num_options;
+    else if(position < 0)
+        position = 0;
 
-    if(option_selected == NULL || position == option_selected_index - 1){
+    if(option_selected == NULL || position == option_selected_index){
         if(option_selected != NULL){
             option_selected->setColor(BLACK);
         }
@@ -30,37 +72,51 @@ void MenuFrame::addMenuLine(MenuLine* option, int position){
         option_selected->setColor(RED);
     }
 
-    options_menu.insert(options_menu.begin() + position - 1, option);
+    options_menu.insert(options_menu.begin() + position, option);
+
+
 
     if(option->getWidth() > max_line_length) {
         max_line_length = option->getWidth();
-        setWidth(max_line_length + 2 * MENU_H_MARGINS);
+        setWidth(max_line_length + MENU_H_MARGINS * 2);
+    }
+
+    /*
+    if(option->getWidth() > max_line_length) {
+
+        max_line_length = option->getWidth();
+        setWidth(max_line_length + MENU_H_MARGINS * 2);
 
         for(MenuLine* line : options_menu){
-            int x = (getWidth() - line->getWidth() / 2) +  getX();
+            int x = ((getWidth() - line->getWidth()) / 2) +  getX() - MENU_LINE_INDENT;
             line->setX(x);
         }
 
+    } else {
+
+        int x = ((getWidth() - option->getWidth()) / 2) +  getX() - MENU_LINE_INDENT;
+        option->setX(x);
+
     }
-
-    int x = (getWidth() - option->getWidth() / 2) +  getX();
-    option->setX(x);
-
-    int y = (position - 1) * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();
-    option->setY(y);
 
     if(position <= num_options){
-        for(int i = num_options; i <= options_menu.size(); i++){
+        for(int i = position; i < options_menu.size(); i++){
 
-            int y = (i - 1) * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();
-            options_menu[i - 1]->setY(y);
+            int y = i * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();// - MENU_LINE_INDENT;
+            options_menu[i]->setY(y);
 
         }
-    }
+    } else {
+        int y = position * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();// - MENU_LINE_INDENT;
+        option->setY(y);
+    }*/
 
-    setHeight(getHeight() + lineHeight);
 
     num_options++;
+
+    setHeight((num_options + 1)  * (lineHeight+ MENU_LINE_SPACING) +  MENU_V_MARGINS );
+
+    Center();
 
 }
 
@@ -90,23 +146,23 @@ bool MenuFrame::prevOption(){
 
 }
 
+
 void MenuFrame::setPosition(int x, int y){
 
     Image::setPosition(x, y);
 
     for(MenuLine* line : options_menu){
-        int x = (getWidth() - line->getWidth() / 2) +  getX();
-        line->setX(x);
+        int xx = ((getWidth() - line->getWidth()) / 2) +  getX() - MENU_LINE_INDENT;
+        line->setX(xx);
     }
 
-    for(int i = 1; i <= options_menu.size(); i++){
-
-        int y = (i - 1) * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();
-        options_menu[i - 1]->setY(y);
-
+    for(int i = 0; i < options_menu.size(); i++){
+        int yy = i * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();// - MENU_LINE_INDENT;
+        options_menu[i]->setY(yy);
     }
 
 }
+
 
 void MenuFrame::startMenuFrame(Game *game){
 
@@ -153,6 +209,7 @@ void Menu::endMenu(){
 
 void Menu::pushMenu(MenuFrame *frame){
 
+    frame->parentmenu = this;
     MenuFrame *tempframe = framestack.top();
     tempframe->endMenuFrame(game);
     frame->startMenuFrame(game);
@@ -174,11 +231,13 @@ void Menu::readInput(){
 
     MenuFrame *tempframe = framestack.top();
 
+    if(input->right)
+        game->pause(false);
     if(input->up)
         tempframe->prevOption();
     if(input->down)
         tempframe->nextOption();
     if(input->space)
-        tempframe->option_selected->option(game);
+        tempframe->option_selected->option(this);
 
 }

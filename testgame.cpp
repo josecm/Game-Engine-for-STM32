@@ -1,12 +1,7 @@
 #include "testgame.h"
 
-bool line1func(Game* game){
 
-    game->pause(false);
-    return true;
-}
-
-bool line2func(Game* game){
+bool linefunc(Menu* menu){
 
     return true;
 }
@@ -14,19 +9,19 @@ bool line2func(Game* game){
 TestGame::TestGame() : Game()
 {
 
-   MenuLine *line1 = new MenuLine(0, 0, "RETURN", line1func);
-   MenuLine *line2 = new MenuLine(0, 0, "NAO FAZ NADA", line2func);
-   MenuFrame *pauseinit = new MenuFrame(200,300);
+   MenuFrame *pauseinit = new MenuFrame();
+   MenuFrame *pause2 = new MenuFrame();
+
+   MenuLine *line1 = new MenuLine(0, 0, "NAO FAZ NADA1", linefunc);
+   MenuLine *line2 = new MenuLine(0, 0, "NAO FAZ NADA2", linefunc);
+   MenuLineNextFrame *linenext = new MenuLineNextFrame(pause2, "NEXT FRAME");
+
    pauseinit->addMenuLine(line1);
-   pauseinit->addMenuLine(line2);
+   pauseinit->addMenuLine(linenext);
+   pause2->addMenuLine(line2);
 
    Menu *pausemenu = new Menu(this, pauseinit, controller1);
-
    setMenuPaused(pausemenu);
-
-   SquareImage *sqr = new SquareImage(10, 10, 10, 10);
-   addGraphic(sqr);
-   sqr->setDimensions(100, 100);
 
    counter = 0;
    message = new TextBoxImage(750, 50, "0");
@@ -40,22 +35,20 @@ TestGame::TestGame() : Game()
    finish->setMass(std::numeric_limits<float>::max());
    addEntity(finish);
 
-
    // NIVEL 1
 
    TestLevel *level1 = new TestLevel(this, 25, 25, 700, 500);
-   TestLevel *level2 = new TestLevel(this, 25, 100, 700, 500);
+   TestLevel *level2 = new TestLevel(this, 25, 25, 700, 500);
 
    Wall *wall;
    wall = new Wall(this, 100, 0); level1->addEntity(wall); level2->addEntity(wall);
-   wall = new Wall(this, 250, 200); level1->addEntity(wall);
-   wall = new Wall(this, 400, 0); level1->addEntity(wall); level2->addEntity(wall);
-   wall = new Wall(this, 550, 200); level1->addEntity(wall);
+   wall = new Wall(this, 250, 100); level1->addEntity(wall);
+   wall = new Wall(this, 400, 0); level1->addEntity(wall);
+   wall = new Wall(this, 550, 100); level1->addEntity(wall); level2->addEntity(wall);
    //wall = new Wall(this, 700, 0); addEntity(wall);
 
-   addLevel(level1);
    addLevel(level2);
-
+   addLevel(level1);
 
 }
 

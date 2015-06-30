@@ -5,6 +5,8 @@
 #include <QGraphicsRectItem>
 #include <QString>
 #include <QWidget>
+#include <QGraphicsScene>
+#include <QRectF>
 #include <cmath>
 #include <iostream>
 #include "Vector.h"
@@ -104,7 +106,6 @@ class TextBoxImage: public Image{
 public:
     TextBoxImage(int x = 0, int y = 0, string txt = "");
     void setText(string txt);
-    void setColor(COLOR clr);
     void setTextSize(TEXT_SIZE size);
 
 };

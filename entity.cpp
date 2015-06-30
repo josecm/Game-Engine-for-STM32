@@ -163,68 +163,7 @@ EntitySquare::EntitySquare(Game *game, int x, int y, int heigth, int width, floa
 
 void EntitySquare::update(){
 
-    if(input){
-        //ISTO VAI TER DE SAIR DAQUI - IMPLEMENTAR CONTROLLER (DE ALGUMA FORMA CONECTADA AO JOGO E A ENTIDADE
-        /*
-        if(left)
-            velocity.rotate(-1.0);
-        if(right)
-            velocity.rotate(1.0);
-        if(up)
-            velocity *= 1.01;
-        if(down)
-            velocity *= 0.99;
-         */
-        if(input->left)
-            velocity.rotate(5.0);
-        //velocity.setAngle(180.0);
-        if(input->right)
-            velocity.rotate(-5.0);
-        //velocity.setAngle(0.0);
-        if(input->up){
-
-            if(velocity.getLength() < 0.001){
-                velocity.stretch(1.0);
-            }
-            velocity *= 1.01;
-
-            //velocity.setAngle(270.0);
-        }
-        if(input->down)
-            //velocity.setAngle(90.0);
-            velocity *= 0.99;
-
-        /*
-        if(left)
-            velocity.setX(velocity.getx - 0.05);
-        if(right)
-            velocity.setX(velocity.getx + 0.05);
-        if(up)
-            velocity.setY(velocity.gety - 0.05);
-        if(down)
-             velocity.setY(velocity.gety + 0.05);
-        */
-
-        //...................................................................................................
-    }
-
     Entity::update();
-
-    if(x + width > 800 || x < 0)
-        velocity.reverseX();
-
-    if(y + height > 600 || y < 0)
-        velocity.reverseY();
-
-    if(x + width > 800)
-        setPosition(800 - width, y);
-    else if(x < 0)
-        setPosition(0, y);
-
-    if(y + height > 600)
-        setPosition(x, 600 - height);
-    else if(y < 0)
-        setPosition(x, 0);
 
     rotatedBoxReady = false;
  }

@@ -84,6 +84,8 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
+    GAME_STATE getState() { return state; }
+
 
 public slots:
     virtual void update();

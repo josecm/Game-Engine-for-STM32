@@ -7,7 +7,7 @@ ScreenBorder::ScreenBorder(Game *game, SCREEN_BORDER border) : EntitySquare(game
     if(border == SCREEN_TOP){
         setHeight(2);
         setWidth(800);
-        setPosition(0, -10);
+        setPosition(0, -2);
         setMass(std::numeric_limits<float>::max());
     } else if(border == SCREEN_BOTTOM){
         setHeight(2);
@@ -17,7 +17,7 @@ ScreenBorder::ScreenBorder(Game *game, SCREEN_BORDER border) : EntitySquare(game
     } else if(border == SCREEN_LEFT){
         setHeight(600);
         setWidth(2);
-        setPosition(-10, 0);
+        setPosition(-2, 0);
         setMass(std::numeric_limits<float>::max());
     } else if(border == SCREEN_RIGHT){
         setHeight(600);
@@ -30,8 +30,6 @@ ScreenBorder::ScreenBorder(Game *game, SCREEN_BORDER border) : EntitySquare(game
 
 Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
 {
-
-
     levelover = false; levelsucess = false;
     currentlevel = 0;
     state = RUNNING;
@@ -86,7 +84,7 @@ void Game::pause(bool tf){
             return;
 
         state = RUNNING;
-        paused_menu->endMenu();
+        //paused_menu->endMenu();
 
     }
 }
@@ -200,7 +198,6 @@ void Game::collisions(){
             if(entity_list[i]->collidesWith(entity_list[k], &normal)){
                 entity_list[i]->onCollision(*(entity_list[k]), &normal);
             }
-
         }
     }
 
@@ -219,6 +216,7 @@ void Game::update(){
             ent->update();
 
         if(levelover){
+
             levelover = false;
             if(levelsucess){
                 level_list[currentlevel]->endlevel();
