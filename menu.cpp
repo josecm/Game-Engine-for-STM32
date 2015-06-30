@@ -7,13 +7,7 @@ MenuLine::MenuLine(int x, int y, string option, bool(*opt)(Menu *)) : TextBoxIma
 
 bool returnOption(Menu *menu){
 
-    Game *game = menu->getGame();
-
-    if(game->getState() == PAUSED){
-        game->pause(false);
-    }
-    else
-        menu->popMenu();
+    menu->popMenu();
 
 }
 
@@ -39,8 +33,6 @@ MenuFrame::MenuFrame() : SquareImage(), option_selected(NULL), max_line_length(0
     num_options(0), lineHeight(TEXT_SMALL), option_selected_index(0) {
 
     parentmenu = NULL;
-    returnline = new MenuLineReturn();
-    addMenuLine(returnline);
     setColor(WHITE);
 
 }
@@ -80,37 +72,6 @@ void MenuFrame::addMenuLine(MenuLine* option, int position){
         max_line_length = option->getWidth();
         setWidth(max_line_length + MENU_H_MARGINS * 2);
     }
-
-    /*
-    if(option->getWidth() > max_line_length) {
-
-        max_line_length = option->getWidth();
-        setWidth(max_line_length + MENU_H_MARGINS * 2);
-
-        for(MenuLine* line : options_menu){
-            int x = ((getWidth() - line->getWidth()) / 2) +  getX() - MENU_LINE_INDENT;
-            line->setX(x);
-        }
-
-    } else {
-
-        int x = ((getWidth() - option->getWidth()) / 2) +  getX() - MENU_LINE_INDENT;
-        option->setX(x);
-
-    }
-
-    if(position <= num_options){
-        for(int i = position; i < options_menu.size(); i++){
-
-            int y = i * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();// - MENU_LINE_INDENT;
-            options_menu[i]->setY(y);
-
-        }
-    } else {
-        int y = position * (MENU_LINE_SPACING + lineHeight) + MENU_V_MARGINS + getY();// - MENU_LINE_INDENT;
-        option->setY(y);
-    }*/
-
 
     num_options++;
 
@@ -239,5 +200,7 @@ void Menu::readInput(){
         tempframe->nextOption();
     if(input->space)
         tempframe->option_selected->option(this);
+
+    input->right = input->down = input->left = input->up = input->space =  0;
 
 }

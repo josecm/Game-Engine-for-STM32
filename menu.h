@@ -26,9 +26,8 @@ public:
 
 };
 
+
 class MenuLineReturn : public MenuLine {
-
-
 
 public:
     MenuLineReturn(int x = 0, int y = 0);
@@ -52,7 +51,6 @@ class MenuFrame : public SquareImage  {
     Menu* parentmenu;
     vector<MenuLine*> options_menu;
     MenuLine *option_selected;
-    MenuLineReturn* returnline;
     int num_options;
     int max_line_length;
     int lineHeight;

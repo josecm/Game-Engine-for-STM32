@@ -84,7 +84,7 @@ void Game::pause(bool tf){
             return;
 
         state = RUNNING;
-        //paused_menu->endMenu();
+        paused_menu->endMenu();
 
     }
 }

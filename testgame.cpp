@@ -6,6 +6,13 @@ bool linefunc(Menu* menu){
     return true;
 }
 
+bool linereturnpause(Menu* menu){
+
+    menu->getGame()->pause(false);
+
+    return true;
+}
+
 TestGame::TestGame() : Game()
 {
 
@@ -14,10 +21,15 @@ TestGame::TestGame() : Game()
 
    MenuLine *line1 = new MenuLine(0, 0, "NAO FAZ NADA1", linefunc);
    MenuLine *line2 = new MenuLine(0, 0, "NAO FAZ NADA2", linefunc);
+   MenuLine *continueline = new MenuLine(0,0, "CONTINUE", linereturnpause);
+
+   MenuLineReturn *linereturn = new MenuLineReturn();
    MenuLineNextFrame *linenext = new MenuLineNextFrame(pause2, "NEXT FRAME");
 
-   pauseinit->addMenuLine(line1);
+   pauseinit->addMenuLine(continueline);
    pauseinit->addMenuLine(linenext);
+   pauseinit->addMenuLine(line1);
+   pause2->addMenuLine(linereturn);
    pause2->addMenuLine(line2);
 
    Menu *pausemenu = new Menu(this, pauseinit, controller1);
