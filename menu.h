@@ -27,10 +27,10 @@ public:
 };
 
 
-class MenuLineReturn : public MenuLine {
+class MenuLinePrevFrame : public MenuLine {
 
 public:
-    MenuLineReturn(int x = 0, int y = 0);
+    MenuLinePrevFrame(int x = 0, int y = 0);
 
 };
 
@@ -41,6 +41,12 @@ class MenuLineNextFrame : public MenuLine {
     MenuFrame *next;
 public:
     MenuLineNextFrame(MenuFrame* nxt, string str, int x = 0, int y = 0);
+};
+
+class MenuLineContinue : public MenuLine {
+
+public:
+    MenuLineContinue();
 };
 
 class MenuFrame : public SquareImage  {
@@ -92,6 +98,8 @@ public:
     void popMenu();
     MenuFrame* peekMenu() { return framestack.top(); }
     virtual void readInput();
-};
+};       
+
+
 
 #endif // MENU_H

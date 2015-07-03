@@ -32,10 +32,12 @@ Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
 {
     levelover = false; levelsucess = false;
     currentlevel = 0;
-    state = RUNNING;
+    state = INITIAL_MENU;
     controller1 = new Controller();
     controller2 = new Controller();
     paused_menu = NULL;
+    initial_menu = NULL;
+    background_image = NULL;
 
     ScreenBorder *border;
     border = new ScreenBorder(this, SCREEN_TOP); screen_borders.push_back(border);
@@ -46,6 +48,7 @@ Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
     for(Entity* fig : screen_borders)
         entity_list.push_back(fig);
 
+
     //CENAS DO QT
 
     setFocus();
@@ -54,16 +57,24 @@ Game::Game() : QGraphicsView(), scene(new QGraphicsScene)
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setFixedSize(800, 600);
-    this->setScene(scene);
+    this->setScene(scene);    
+
+    setBackgroundColor(GREEN);
 
     update_timer.setInterval(17);
     connect(&update_timer, SIGNAL(timeout()), this, SLOT(update()) );
     update_timer.start();
+
 }
 
 void Game::run(){
-    level_list[currentlevel]->startlevel();
+
+    if(state = INITIAL_MENU){
+        initial_menu->endMenu();
+    }
+
     state = RUNNING;
+    level_list[currentlevel]->startlevel();
 }
 
 void Game::pause(bool tf){
@@ -97,7 +108,32 @@ void Game::addLevel(Level *lvl){
     level_list.push_back(lvl);
 }
 
+bool Game::entityExists(Entity* ent){
+
+    for(int i = 0; i < entity_list.size(); i++){
+        if(ent == entity_list[i]){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Game::graphicExists(Image* ent){
+
+    for(int i = 0; i < graphics_list.size(); i++){
+        if(ent == graphics_list[i]){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Game::addEntity(Entity* ent){
+
+    if(entityExists(ent))
+        return;
 
     entity_list.push_back(ent);
     graphics_list.push_back(ent);
@@ -106,6 +142,9 @@ void Game::addEntity(Entity* ent){
 }
 
 void Game::addGraphic(Image *img){
+
+    if(graphicExists(img))
+        return;
 
     graphics_list.push_back(img);
 
@@ -143,9 +182,69 @@ void Game::setMenuPaused(Menu *menu){
     paused_menu = menu;
 }
 
+void Game::setMenuInitial(Menu *menu){
+    initial_menu = menu;
+}
+
+void Game::goToInitialMenu(){
+
+    if(state == RUNNING || state == PAUSED){
+        level_list[currentlevel]->endlevel();
+    }
+
+    state = INITIAL_MENU;
+    clearGraphics();
+    initial_menu->startMenu();
+
+}
+
 void Game::levelOver(bool tf){
     levelover = true;
     levelsucess = tf;
+}
+
+void Game::setBackgroundColor(COLOR clr){
+
+    Qt::GlobalColor color;
+
+    switch(clr){
+        case(BLACK):
+            color = Qt::black;
+            break;
+
+        case(WHITE):
+            color = Qt::white;
+            break;
+
+        case(BLUE):
+            color = Qt::blue;
+            break;
+
+        case(RED):
+            color = Qt::red;
+            break;
+
+        case(GREEN):
+            color = Qt::green;
+            break;
+    }
+
+    setBackgroundBrush(color);
+}
+
+void Game::setBackgroundImage(BitmapImage *img){
+
+    background_image = img;
+    img->setPosition(0,0);
+
+    addGraphic(img);
+}
+
+void Game::removeBackgroundImage(){
+
+    removeGraphic(background_image);
+    background_image = NULL;
+
 }
 
 void Game::keyPressEvent(QKeyEvent *event){
@@ -203,6 +302,24 @@ void Game::collisions(){
 
 }
 
+void Game::levelupdate(){
+
+    if(levelover){
+        levelover = false;
+        level_list[currentlevel]->endlevel();
+        if(levelsucess){
+            if(++currentlevel == level_list.size()){
+                currentlevel = 0;
+                goToInitialMenu();
+                return;
+            }
+            level_list[currentlevel]->startlevel();
+        } else {
+            level_list[currentlevel]->startlevel();
+        }
+    }
+}
+
 void Game::update(){
 
     if(state == RUNNING){
@@ -215,25 +332,18 @@ void Game::update(){
         for(Entity *ent : entity_list)
             ent->update();
 
-        if(levelover){
-
-            levelover = false;
-            if(levelsucess){
-                level_list[currentlevel]->endlevel();
-                if(++currentlevel == level_list.size())
-                    currentlevel = 0;
-                level_list[currentlevel]->startlevel();
-            } else {
-                level_list[currentlevel]->initialize();
-            }
-        }
+        levelupdate();
 
     }
 
     if(state == PAUSED) {
         paused_menu->readInput();
-
     }
+
+    if(state == INITIAL_MENU){
+        initial_menu->readInput();
+    }
+
 
 }
 

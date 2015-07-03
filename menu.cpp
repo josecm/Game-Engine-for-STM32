@@ -12,7 +12,7 @@ bool returnOption(Menu *menu){
 }
 
 
-MenuLineReturn::MenuLineReturn(int x, int y) :  MenuLine(x, y, "RETURN", returnOption) {
+MenuLinePrevFrame::MenuLinePrevFrame(int x, int y) :  MenuLine(x, y, "RETURN", returnOption) {
 
 }
 
@@ -28,6 +28,15 @@ bool nextFrameOption(Menu *menu){
 MenuLineNextFrame::MenuLineNextFrame(MenuFrame* nxt, string str, int x, int y) : MenuLine(x, y, str, nextFrameOption), next(nxt) {
 
 }
+
+bool continueOption(Menu* menu){
+
+    menu->getGame()->pause(false);
+
+    return true;
+}
+
+MenuLineContinue::MenuLineContinue() : MenuLine(0, 0, "CONTINUE", continueOption) { }
 
 MenuFrame::MenuFrame() : SquareImage(), option_selected(NULL), max_line_length(0),
     num_options(0), lineHeight(TEXT_SMALL), option_selected_index(0) {

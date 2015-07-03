@@ -7,13 +7,14 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QRectF>
+
 #include <cmath>
 #include <iostream>
 #include "Vector.h"
 
 using namespace std;
 
-enum COLOR { BLACK, WHITE, BLUE , RED, GREEN, YELLOW, ORGANE };
+enum COLOR { BLACK, WHITE, BLUE , RED, GREEN, YELLOW, ORANGE };
 
 typedef struct {
 

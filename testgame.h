@@ -18,11 +18,32 @@ public:
     virtual void readInput();
 };
 
-class Wall : public EntitySquare{
-
+class Wall : public EntitySquare {
 
 public:
-    Wall(Game* game, int x = 0, int y = 0);
+    Wall(Game* game, int x = 0, int y = 0, int height = 1, int width = 1,  string wallpic = ":/imagens/transparent.png");
+
+};
+
+class WallBig : public Wall {
+
+public:
+    WallBig(Game* game, int x = 0, int y = 0);
+
+};
+
+class WallMedium : public Wall {
+
+public:
+    WallMedium(Game *game, int x= 0, int y = 0);
+
+};
+
+
+class WallSmall : public Wall {
+
+public:
+    WallSmall(Game *game, int x= 0, int y = 0);
 
 };
 
@@ -53,23 +74,8 @@ public:
 
     TestLevel(Game* game, int px, int py, int fx, int fy) : Level(game), px(px), py(py), fx(fx), fy(fy) { }
 
-    virtual void initialize() {
-
-        static TestGame *testgame = dynamic_cast<TestGame*>(game);
-
-        testgame->player->setPosition(px,py);
-        testgame->player->setVelocity(0.0, 0.0);
-        testgame->finish->setPosition(fx,fy);
-
-
-        if(game->isLevelOverSuccess()){
-            (testgame->counter)++;
-            ostringstream stream;
-            stream << testgame->counter;
-            testgame->message->setText(stream.str());
-         }
-
-    }
+    virtual void initialize();
+    virtual void finalize();
 
 };
 

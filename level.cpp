@@ -23,4 +23,5 @@ void Level::endlevel(){
     for(Image* img: graphics_list)
         game->removeGraphic(img);
 
+    finalize();
 }

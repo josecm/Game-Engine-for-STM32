@@ -23,6 +23,7 @@ public:
     void endlevel();
 
     virtual void initialize() { }
+    virtual void finalize() { }
 
     void addEntity(Entity *ent) { entity_list.push_back(ent); }
     void addGraphic(Image *img) { graphics_list.push_back(img); }
